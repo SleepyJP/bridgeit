@@ -1,13 +1,13 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// BRIDGEIT - SWAP WIDGET (MAIN BRIDGE UI)
+// BRIDGEIT - SWAP WIDGET (STAINED GLASS THEME)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowDownUp, Zap, Clock, Shield, AlertCircle, Loader2 } from 'lucide-react';
-import { useAccount, useBalance, useSwitchChain } from 'wagmi';
+import { ArrowDownUp, Zap, Clock, Shield, AlertCircle, Loader2, Sparkles } from 'lucide-react';
+import { useAccount, useSwitchChain } from 'wagmi';
 import { formatUnits, parseUnits } from 'viem';
 import { ChainSelector } from './ChainSelector';
 import { TokenSelector } from './TokenSelector';
@@ -17,8 +17,7 @@ import { useBridge } from '@/hooks/useBridge';
 import { useSettings } from '@/hooks/useSettings';
 import { Token } from '@/types/bridge.types';
 import { formatNumber, formatUSD, debounce } from '@/lib/utils';
-import { getChainById, supportedChains } from '@/lib/wagmi';
-import { NATIVE_TOKEN } from '@/lib/lifi';
+import { getChainById } from '@/lib/wagmi';
 
 export function SwapWidget() {
   const { address, isConnected, chainId: currentChainId } = useAccount();
@@ -153,24 +152,27 @@ export function SwapWidget() {
 
   return (
     <div className="w-full max-w-lg mx-auto">
-      {/* Main Card */}
+      {/* Main Card - Stained Glass Style */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-[var(--color-surface)] rounded-3xl p-6 border border-white/10 shadow-2xl"
+        className="card-glass rounded-2xl p-6 animate-glow-rainbow"
       >
-        {/* Header */}
+        {/* Header with rainbow gradient */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-[var(--color-primary)] via-[var(--color-accent)] to-[var(--color-secondary)] bg-clip-text text-transparent">
-            {theme.brand.name}
-          </h2>
-          <div className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
-            <Shield className="w-4 h-4" />
-            Powered by LI.FI
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-6 h-6 text-glass-gold animate-float" />
+            <h2 className="text-2xl font-heading font-bold gradient-text">
+              {theme.brand.name}
+            </h2>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-text-muted glass-teal px-3 py-1 rounded-full">
+            <Shield className="w-4 h-4 text-glass-teal" />
+            <span className="font-body">LI.FI</span>
           </div>
         </div>
 
-        {/* Dynamic Bridge Message */}
+        {/* Dynamic Bridge Message - Color cycles through rainbow */}
         <AnimatePresence mode="wait">
           <motion.div
             key={bridgeMessage}
@@ -179,16 +181,16 @@ export function SwapWidget() {
             exit={{ opacity: 0, y: 10 }}
             className="text-center mb-4"
           >
-            <span className="text-lg font-semibold text-[var(--color-primary)]">
+            <span className="text-lg font-heading font-semibold animate-color-cycle">
               {bridgeMessage}
             </span>
           </motion.div>
         </AnimatePresence>
 
-        {/* From Section */}
-        <div className="bg-black/30 rounded-2xl p-4 mb-2">
+        {/* From Section - Ruby/Amber tinted glass */}
+        <div className="glass-ruby rounded-xl p-4 mb-2">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm text-[var(--color-text-muted)]">From</span>
+            <span className="text-sm text-text-muted font-body">From</span>
             <ChainSelector
               selectedChainId={fromChainId}
               onSelect={(id) => {
@@ -217,25 +219,25 @@ export function SwapWidget() {
                 const val = e.target.value.replace(/[^0-9.]/g, '');
                 setFromAmount(val);
               }}
-              className="flex-1 bg-transparent text-right text-2xl font-bold text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] focus:outline-none"
+              className="input-glass flex-1 bg-transparent text-right text-2xl font-bold text-text placeholder:text-text-muted focus:outline-none border-none"
             />
           </div>
         </div>
 
-        {/* Swap Button */}
+        {/* Swap Button - Rainbow border animation */}
         <div className="flex justify-center -my-3 z-10 relative">
           <button
             onClick={handleSwapChains}
-            className="p-3 bg-[var(--color-surface)] border-4 border-[var(--color-background)] rounded-xl hover:bg-white/10 transition-all hover:rotate-180 duration-300"
+            className="p-3 bg-surface border-4 border-background rounded-xl hover:scale-110 transition-all hover:rotate-180 duration-300 animate-border-cycle"
           >
-            <ArrowDownUp className="w-5 h-5 text-[var(--color-primary)]" />
+            <ArrowDownUp className="w-5 h-5 text-glass-teal" />
           </button>
         </div>
 
-        {/* To Section */}
-        <div className="bg-black/30 rounded-2xl p-4 mt-2">
+        {/* To Section - Teal/Sapphire tinted glass */}
+        <div className="glass-sapphire rounded-xl p-4 mt-2">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm text-[var(--color-text-muted)]">To</span>
+            <span className="text-sm text-text-muted font-body">To</span>
             <ChainSelector
               selectedChainId={toChainId}
               onSelect={(id) => {
@@ -258,9 +260,9 @@ export function SwapWidget() {
             />
             <div className="flex-1 text-right">
               {bridge.isLoadingQuote ? (
-                <Loader2 className="w-6 h-6 text-[var(--color-primary)] animate-spin ml-auto" />
+                <Loader2 className="w-6 h-6 text-glass-sapphire animate-spin ml-auto" />
               ) : (
-                <span className="text-2xl font-bold text-[var(--color-text)]">
+                <span className="text-2xl font-bold text-text">
                   {outputAmount}
                 </span>
               )}
@@ -268,55 +270,68 @@ export function SwapWidget() {
           </div>
         </div>
 
-        {/* Quote Details */}
+        {/* Quote Details - Gold/Emerald accents */}
         {bridge.quote && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
-            className="mt-4 p-4 bg-black/20 rounded-xl space-y-2 text-sm"
+            className="mt-4 p-4 glass-gold rounded-xl space-y-2 text-sm font-body"
           >
             <div className="flex justify-between">
-              <span className="text-[var(--color-text-muted)]">Min. Received</span>
-              <span className="text-[var(--color-text)]">{minOutputAmount} {toToken?.symbol}</span>
+              <span className="text-text-muted">Min. Received</span>
+              <span className="text-text">{minOutputAmount} {toToken?.symbol}</span>
+            </div>
+            <div className="lead-line my-2"></div>
+            <div className="flex justify-between">
+              <span className="text-text-muted">Est. Gas</span>
+              <span className="text-glass-amber">{gasCostUSD}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[var(--color-text-muted)]">Est. Gas</span>
-              <span className="text-[var(--color-text)]">{gasCostUSD}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-[var(--color-text-muted)]">Est. Time</span>
-              <span className="text-[var(--color-text)] flex items-center gap-1">
-                <Clock className="w-4 h-4" />
+              <span className="text-text-muted">Est. Time</span>
+              <span className="text-text flex items-center gap-1">
+                <Clock className="w-4 h-4 text-glass-teal" />
                 {executionTime}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-[var(--color-text-muted)]">Route</span>
-              <span className="text-[var(--color-primary)]">{bridge.quote.tool}</span>
+              <span className="text-text-muted">Route</span>
+              <span className="text-glass-emerald font-semibold">{bridge.quote.tool}</span>
             </div>
           </motion.div>
         )}
 
-        {/* Error Display */}
+        {/* Error Display - Ruby glass */}
         {bridge.error && (
-          <div className="mt-4 p-3 bg-[var(--color-error)]/20 border border-[var(--color-error)]/50 rounded-xl flex items-center gap-2 text-[var(--color-error)]">
+          <div className="mt-4 p-3 glass-ruby rounded-xl flex items-center gap-2 text-glass-ruby">
             <AlertCircle className="w-5 h-5" />
-            <span className="text-sm">{bridge.error}</span>
+            <span className="text-sm font-body">{bridge.error}</span>
           </div>
         )}
 
-        {/* Bridge Button */}
-        <Button
-          fullWidth
-          size="lg"
+        {/* Bridge Button - Rainbow glass style */}
+        <button
           onClick={handleBridge}
           disabled={buttonState.disabled}
-          isLoading={bridge.isExecuting}
-          className="mt-6"
+          className={`
+            btn-glass-rainbow w-full mt-6 py-4 rounded-xl font-heading font-bold text-lg
+            flex items-center justify-center gap-2 transition-all duration-300
+            ${buttonState.disabled
+              ? 'opacity-50 cursor-not-allowed'
+              : 'hover:scale-[1.02] hover:shadow-glow-rainbow'
+            }
+            ${bridge.isExecuting ? 'animate-pulse' : ''}
+          `}
         >
-          <Zap className="w-5 h-5 mr-2" />
+          {bridge.isExecuting ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <Zap className="w-5 h-5" />
+          )}
           {buttonState.text}
-        </Button>
+        </button>
+
+        {/* Decorative rainbow line at bottom */}
+        <div className="mt-6 h-1 bg-gradient-rainbow rounded-full opacity-50"></div>
       </motion.div>
 
       {/* Transaction Status Modal */}

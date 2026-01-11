@@ -1,16 +1,30 @@
 // ═══════════════════════════════════════════════════════════════════════════════
-// BRIDGEIT - AD MARQUEE BANNER (PULSEX STYLE)
+// BRIDGEIT - AD MARQUEE BANNER (STAINED GLASS THEME)
 // ═══════════════════════════════════════════════════════════════════════════════
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSettings } from '@/hooks/useSettings';
 import { AdBannerItem } from '@/types/marquee.types';
 
 interface AdMarqueeProps {
   position?: 'top' | 'bottom';
 }
+
+// Map colors to glass classes
+const GLASS_CLASSES: Record<string, string> = {
+  '#E53935': 'glass-ruby glow-ruby',
+  '#FF8F00': 'glass-amber glow-amber',
+  '#FFD54F': 'glass-gold glow-gold',
+  '#00C853': 'glass-emerald glow-emerald',
+  '#00BFA5': 'glass-teal glow-teal',
+  '#00B0FF': 'glass-sapphire glow-sapphire',
+  '#7C4DFF': 'glass-violet glow-violet',
+  '#00FF88': 'glass-emerald glow-emerald',
+  '#00FFFF': 'glass-teal glow-teal',
+  '#FF00FF': 'glass-violet glow-violet',
+};
 
 export function AdMarquee({ position = 'top' }: AdMarqueeProps) {
   const { marqueeConfig } = useSettings();
@@ -37,16 +51,16 @@ export function AdMarquee({ position = 'top' }: AdMarqueeProps) {
 
   return (
     <div
-      className="relative overflow-hidden z-50"
+      className="glass-panel relative overflow-hidden z-50"
       style={{
         height: marqueeConfig.height,
-        backgroundColor: marqueeConfig.backgroundColor,
-        borderBottom: position === 'top' ? marqueeConfig.borderBottom : undefined,
-        borderTop: position === 'bottom' ? marqueeConfig.borderTop : undefined,
       }}
       onMouseEnter={() => marqueeConfig.pauseOnHover && setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
+      {/* Rainbow gradient top border */}
+      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-rainbow"></div>
+
       <div
         className="flex items-center absolute whitespace-nowrap h-full animate-marquee"
         style={{
@@ -61,32 +75,28 @@ export function AdMarquee({ position = 'top' }: AdMarqueeProps) {
         ))}
       </div>
 
-      <style jsx global>{`
-        @keyframes marquee-scroll {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-33.33%); }
-        }
-        .animate-marquee {
-          animation: marquee-scroll linear infinite;
-        }
-      `}</style>
+      {/* Rainbow gradient bottom border */}
+      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-rainbow opacity-50"></div>
     </div>
   );
 }
 
 function AdCard({ item }: { item: AdBannerItem }) {
+  // Get glass class based on accent color
+  const glassClass = item.accentColor ? GLASS_CLASSES[item.accentColor] || 'glass-teal' : 'glass-teal';
+
   const content = (
     <div
-      className="flex items-center gap-3 px-5 py-2 rounded-xl transition-all duration-300 hover:scale-105 cursor-pointer h-12"
+      className={`
+        flex items-center gap-3 px-5 py-2 rounded-lg transition-all duration-300
+        hover:scale-105 cursor-pointer h-12 font-body
+        ${item.gradientColors ? '' : glassClass}
+      `}
       style={{
         background: item.gradientColors
           ? `linear-gradient(135deg, ${item.gradientColors[0]}, ${item.gradientColors[1]})`
-          : item.backgroundColor || 'rgba(255,255,255,0.1)',
+          : undefined,
         color: item.textColor || '#FFFFFF',
-        border: item.borderColor ? `1px solid ${item.borderColor}` : 'none',
-        boxShadow: item.glowEffect
-          ? `0 0 25px ${item.accentColor || '#00FF88'}50, 0 0 50px ${item.accentColor || '#00FF88'}25`
-          : 'none',
       }}
     >
       {item.type === 'image' && item.imageUrl && (
@@ -103,20 +113,20 @@ function AdCard({ item }: { item: AdBannerItem }) {
             <img
               src={item.icon}
               alt=""
-              className="w-8 h-8 rounded-full object-cover"
+              className="w-8 h-8 rounded-full object-cover ring-2 ring-white/20"
             />
           )}
           <div className="flex flex-col leading-tight">
             {item.title && (
               <span
-                className="font-bold text-sm"
+                className="font-heading font-bold text-sm"
                 style={{ color: item.accentColor || item.textColor }}
               >
                 {item.title}
               </span>
             )}
             {item.subtitle && (
-              <span className="text-xs opacity-80">{item.subtitle}</span>
+              <span className="text-xs opacity-80 font-body">{item.subtitle}</span>
             )}
           </div>
         </>
